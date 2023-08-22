@@ -1,5 +1,5 @@
 import pull_data
-import expobased
+import chibased
 from printbuddies import print_in_place
 from noiftimer import Timer
 from concurrent.futures import ProcessPoolExecutor
@@ -8,7 +8,7 @@ import time
 
 def update():
     pull_data.pull()
-    expobased.load_data_to_db()
+    chibased.load_data_to_db()
 
 
 def main():
