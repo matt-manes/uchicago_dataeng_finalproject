@@ -3,7 +3,6 @@ import pandas
 import numpy
 from pathier import Pathier
 from typing import Any
-from datetime import datetime
 
 root = Pathier(__file__).parent
 
