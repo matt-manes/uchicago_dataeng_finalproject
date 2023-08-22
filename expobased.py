@@ -122,39 +122,49 @@ class ExpoBased(DataBased):
         )
 
 
-if __name__ == "__main__":
+def prepare_data(
+    data: pandas.DataFrame, date_columns: list[str], date_format: str = "%m/%d/%Y"
+) -> pandas.DataFrame:
+    """Convert `NaN` values in `data` to `None` and convert `date_columns` values to `DataBased` compatible strings.
+
+    #### `date_format`: The strftime format of the `date_columns` values.
+
+    Returns the dataframe."""
+    data = data.fillna(numpy.nan).replace([numpy.nan], [None])
+    for column in date_columns:
+        # Convert to datetime
+        data[column] = pandas.to_datetime(data[column], format=date_format)
+        # Convert back to a string in a `Databased` compatible format
+        data[column] = data[column].dt.strftime("%Y-%m-%d %H:%M:%S")
+    return data
+
+
+def load_data_to_db():
+    """Load data from `.csv` files into the `sqlite` database."""
     with ExpoBased() as db:
         db.drop_tables()
         db.vacuum()
         db.make_tables()
-
-        data = pandas.read_csv("business_licenses.csv")
-        data = data.replace([numpy.nan], [None])
-        for column in [
-            "APPLICATION CREATED DATE",
-            "APPLICATION REQUIREMENTS COMPLETE",
-            "PAYMENT DATE",
-            "LICENSE TERM START DATE",
-            "LICENSE TERM EXPIRATION DATE",
-            "LICENSE APPROVED FOR ISSUANCE",
-            "DATE ISSUED",
-            "LICENSE STATUS CHANGE DATE",
+        for target in [
+            (
+                "business_licenses",
+                [
+                    "APPLICATION CREATED DATE",
+                    "APPLICATION REQUIREMENTS COMPLETE",
+                    "PAYMENT DATE",
+                    "LICENSE TERM START DATE",
+                    "LICENSE TERM EXPIRATION DATE",
+                    "LICENSE APPROVED FOR ISSUANCE",
+                    "DATE ISSUED",
+                    "LICENSE STATUS CHANGE DATE",
+                ],
+            ),
+            ("food_inspections", ["Inspection Date"]),
         ]:
-            # Convert date strings to datetime
-            data[column] = pandas.to_datetime(data[column], format="%m/%d/%Y")
-            # Convert back to string with time part included
-            data[column] = data[column].dt.strftime("%Y-%m-%d %H:%M:%S")
-        db.insert_many("business_licenses", data.values.tolist())
+            data = pandas.read_csv(f"{target[0]}.csv")
+            data = prepare_data(data, target[1])
+            db.insert_many(target[0], data.values.tolist())
 
-        # ==========================================================================
 
-        # Repeat process for food inspections file
-        data = pandas.read_csv("food_inspections.csv")
-        data = data.replace([numpy.nan], [None])
-        data["Inspection Date"] = pandas.to_datetime(
-            data["Inspection Date"], format="%m/%d/%Y"
-        )
-        data["Inspection Date"] = data["Inspection Date"].dt.strftime(
-            "%Y-%m-%d %H:%M:%S"
-        )
-        db.insert_many("food_inspections", data.values.tolist())
+if __name__ == "__main__":
+    load_data_to_db()
