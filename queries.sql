@@ -10,3 +10,17 @@ GROUP BY
     business_licenses.ward
 ORDER BY
     num_inspections DESC;
+
+-- Business owner legal names where they own(ed) more than one business
+SELECT
+    legal_name,
+    dba,
+    COUNT(legal_name) AS num_entities
+FROM
+    business_licenses
+WHERE
+    application_type = 'ISSUE'
+GROUP BY
+    legal_name
+HAVING
+    num_entities > 1;
