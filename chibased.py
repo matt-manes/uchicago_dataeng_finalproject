@@ -8,7 +8,7 @@ from datetime import datetime
 root = Pathier(__file__).parent
 
 
-class ExpoBased(DataBased):
+class ChiBased(DataBased):
     def __init__(self):
         super().__init__("expo.db")
         self.make_tables()
@@ -141,7 +141,7 @@ def prepare_data(
 
 def load_data_to_db():
     """Load data from `.csv` files into the `sqlite` database."""
-    with ExpoBased() as db:
+    with ChiBased() as db:
         db.drop_tables()
         db.vacuum()
         db.make_tables()
