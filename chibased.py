@@ -29,20 +29,6 @@ class ChiBased(DataBased):
             ]
         for i in range(0, len(values), n):
             chunk = values[i : i + n]
-            # input(chunk[0])
-            """ sizes = {}
-            for row in chunk:
-                if len(row) < 17:
-                    input(row[0])
-                size = len(row)
-                if size not in sizes:
-                    sizes[size] = 1
-                else:
-                    sizes[size] += 1
-            if len(sizes) > 1:
-                print(sizes)
-                print(f"{i}-{i+n}")
-                input("...") """
             placeholder = (
                 "("
                 + "),(".join(", ".join("?" for _ in value_set) for value_set in chunk)
