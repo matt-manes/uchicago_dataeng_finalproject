@@ -21,7 +21,7 @@ def pull():
     """Download most recent copy of datasets and save to local file."""
     datasets = {
         "business_licenses.csv": "https://data.cityofchicago.org/api/views/r5kz-chrr/rows.csv",
-        "food_inspections.csv": "https://data.cityofchicago.org/api/views/4ijn-s7e5/rows.csv",
+        "food_inspections.csv": "https://data.cityofchicago.org/api/views/qizy-d2wf/rows.csv",
     }
     for filename, url in datasets.items():
         print(f"Downloading {filename} from {url} ...")
