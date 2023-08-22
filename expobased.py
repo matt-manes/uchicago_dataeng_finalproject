@@ -1,5 +1,6 @@
 from databased import DataBased
 import pandas
+import numpy
 from pathier import Pathier
 from typing import Any
 from datetime import datetime
@@ -124,9 +125,11 @@ class ExpoBased(DataBased):
 if __name__ == "__main__":
     with ExpoBased() as db:
         db.drop_tables()
+        db.vacuum()
         db.make_tables()
 
         data = pandas.read_csv("business_licenses.csv")
+        data = data.replace([numpy.nan], [None])
         for column in [
             "APPLICATION CREATED DATE",
             "APPLICATION REQUIREMENTS COMPLETE",
@@ -137,28 +140,21 @@ if __name__ == "__main__":
             "DATE ISSUED",
             "LICENSE STATUS CHANGE DATE",
         ]:
-            # Set missing dates to start of unix epoch in same format as other dates in dataset.
-            data[column] = data[column].fillna(
-                (datetime.fromtimestamp(0)).strftime("%m/%d/%Y")
-            )
-            # Convert all of them to datetime
+            # Convert date strings to datetime
             data[column] = pandas.to_datetime(data[column], format="%m/%d/%Y")
             # Convert back to string with time part included
             data[column] = data[column].dt.strftime("%Y-%m-%d %H:%M:%S")
-        # Fill other missing values with 0
-        # data = data.fillna("0").values.tolist()
-        db.insert_many("business_licenses", data)
-        ###########################################################################
+        db.insert_many("business_licenses", data.values.tolist())
+
+        # ==========================================================================
+
         # Repeat process for food inspections file
         data = pandas.read_csv("food_inspections.csv")
-        data["Inspection Date"] = data["Inspection Date"].fillna(
-            (datetime.fromtimestamp(0)).strftime("%m/%d/%Y")
-        )
+        data = data.replace([numpy.nan], [None])
         data["Inspection Date"] = pandas.to_datetime(
             data["Inspection Date"], format="%m/%d/%Y"
         )
         data["Inspection Date"] = data["Inspection Date"].dt.strftime(
             "%Y-%m-%d %H:%M:%S"
         )
-        # data = data.fillna("0").values.tolist()
-        db.insert_many("food_inspections", data)
+        db.insert_many("food_inspections", data.values.tolist())
