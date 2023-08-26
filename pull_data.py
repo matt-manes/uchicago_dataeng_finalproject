@@ -1,9 +1,11 @@
 import requests
 from pathier import Pathier
+from noiftimer import time_it
 
 root = Pathier(__file__).parent
 
 
+@time_it()
 def download(url: str, filename: str) -> str | None:
     """Download content from `url` to `filename`.
 
@@ -17,6 +19,7 @@ def download(url: str, filename: str) -> str | None:
         )
 
 
+@time_it()
 def pull():
     """Download most recent copy of datasets and save to local file."""
     datasets = {
