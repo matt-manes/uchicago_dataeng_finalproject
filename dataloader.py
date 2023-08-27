@@ -142,11 +142,17 @@ class BusinessLicenses:
 
     @time_it()
     def convert_dates(self, data: pandas.DataFrame) -> pandas.DataFrame:
-        """Convert dates to `%Y-%m-%d %H:%M:%S` format."""
+        """Convert dates to `%Y-%m-%d` format."""
+
+        def converter(date: str) -> str | None:
+            if not isinstance(date, str):
+                return date
+            m, d, y = date.split("/")
+            return f"{y}-{m}-{d}"
+
         for column in data.columns:
             if "_date" in column:
-                data[column] = pandas.to_datetime(data[column], format="%m/%d/%Y")
-                data[column] = data[column].dt.strftime("%Y-%M-%D %H:%M:%S")
+                data[column] = data[column].apply(converter)
         return data
 
     @time_it()
@@ -389,6 +395,7 @@ class BusinessLicenses:
         data = self.remove_non_chicago_entries(data)
         data = self.drop_columns(data)
         data = self.normalize_strings(data)
+        data = self.convert_dates(data)
         data = self.fill_missing(data)
         return data
 
@@ -542,7 +549,14 @@ class FoodInspections(BusinessLicenses):
     def insert_inspection_data(self, data: pandas.DataFrame):
         """Populate `inspections` table."""
         data = data[
-            ["inspection_id", "license_number", "street", "inspection_type", "results"]
+            [
+                "inspection_id",
+                "license_number",
+                "street",
+                "inspection_type",
+                "results",
+                "inspection_date",
+            ]
         ].sort_values("inspection_id")
         for args in [
             ["street", "facility_address_id", "facility_addresses", "id", "street"],
@@ -559,6 +573,7 @@ class FoodInspections(BusinessLicenses):
                     "facility_address_id",
                     "inspection_type_id",
                     "result_type_id",
+                    "date",
                 ],
                 data.values.tolist(),
             )
@@ -621,6 +636,7 @@ class FoodInspections(BusinessLicenses):
         data = self.normalize_strings(data)
         data = self.fix_cities(data)
         data = self.remove_non_chicago_entries(data)
+        data = self.convert_dates(data)
         data = self.fill_missing(data)
         return data
 
