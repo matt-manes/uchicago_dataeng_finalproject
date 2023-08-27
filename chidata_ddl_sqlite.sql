@@ -46,10 +46,7 @@ CREATE TABLE
 DROP TABLE IF EXISTS application_payments;
 
 CREATE TABLE
-    application_payments (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        date TIMESTAMP
-    );
+    application_payments (id INTEGER PRIMARY KEY AUTOINCREMENT, date DATE);
 
 ------------------------------------------------|
 DROP TABLE IF EXISTS license_applications;
@@ -63,9 +60,9 @@ CREATE TABLE
         activity_id INTEGER,
         type_id INTEGER,
         payment_id INTEGER,
-        created_date TIMESTAMP,
-        completed_date TIMESTAMP,
-        approval_date TIMESTAMP,
+        created_date DATE,
+        completed_date DATE,
+        approval_date DATE,
         conditional_approval TEXT,
         site_number INTEGER
     );
@@ -87,11 +84,11 @@ CREATE TABLE
     licenses (
         license_number INTEGER PRIMARY KEY,
         account_number INTEGER,
-        start_date TIMESTAMP,
-        expiration_date TIMESTAMP,
-        issue_date TIMESTAMP,
+        start_date DATE,
+        expiration_date DATE,
+        issue_date DATE,
         status_id INTEGER,
-        status_change_date TIMESTAMP
+        status_change_date DATE
     );
 
 ------------------------------------------------|
@@ -155,9 +152,10 @@ CREATE TABLE
     inspections (
         id INTEGER PRIMARY KEY,
         license_number INTEGER,
-        facility_address_id INTEGER date TIMESTAMP,
+        facility_address_id INTEGER,
         inspection_type_id INTEGER,
-        result_type_id INTEGER
+        result_type_id INTEGER,
+        date DATE
     );
 
 ------------------------------------------------|
