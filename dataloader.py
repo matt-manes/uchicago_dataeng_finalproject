@@ -316,7 +316,7 @@ class BusinessLicenses:
                     "license_code",
                     "account_number",
                     "activity_id",
-                    "type_id",
+                    "application_type_id",
                     "created_date",
                     "completed_date",
                     "approval_date",

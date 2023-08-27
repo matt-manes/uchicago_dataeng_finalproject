@@ -58,7 +58,7 @@ CREATE TABLE
         license_code INTEGER,
         account_number INTEGER,
         activity_id INTEGER,
-        type_id INTEGER,
+        application_type_id INTEGER,
         payment_id INTEGER,
         created_date DATE,
         completed_date DATE,
