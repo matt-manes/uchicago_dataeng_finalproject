@@ -1,26 +1,30 @@
 -- For the sqlite database
 -- Number of food inspections by ward
 SELECT
-    COUNT(DISTINCT inspection_id) AS num_inspections,
-    business_licenses.ward
+    COUNT(inspections.id) AS inspection_count,
+    business_addresses.ward
 FROM
-    food_inspections
-    INNER JOIN business_licenses ON food_inspections.license_number = business_licenses.license_number
+    inspections
+    INNER JOIN licenses ON inspections.license_number = licenses.license_number
+    INNER JOIN businesses ON licenses.account_number = businesses.account_number
+    INNER JOIN business_addresses ON businesses.address_id = business_addresses.id
 GROUP BY
-    business_licenses.ward
+    business_addresses.ward
 ORDER BY
-    num_inspections DESC;
+    inspection_count DESC;
 
--- Business owner legal names where they own(ed) more than one business
+-- Number of failed food inspections by ward
 SELECT
-    legal_name,
-    dba,
-    COUNT(legal_name) AS num_entities
+    COUNT(inspections.id) AS inspection_count,
+    business_addresses.ward
 FROM
-    business_licenses
+    inspections
+    INNER JOIN licenses ON inspections.license_number = licenses.license_number
+    INNER JOIN businesses ON licenses.account_number = businesses.account_number
+    INNER JOIN business_addresses ON businesses.address_id = business_addresses.id
 WHERE
-    application_type = 'ISSUE'
+    inspections.result_type_id = 2
 GROUP BY
-    legal_name
-HAVING
-    num_entities > 1;
+    business_addresses.ward
+ORDER BY
+    inspection_count DESC;
