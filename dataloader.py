@@ -434,6 +434,11 @@ class FoodInspections(BusinessLicenses):
         return data[data["city"] == "Chicago"]
 
     @time_it()
+    def remove_schools(self, data: pandas.DataFrame) -> pandas.DataFrame:
+        """Remove school facilities. (They seem to be operating under a different licensing scheme.)"""
+        return data[~data["facility_type"].str.contains("School", na=False)]
+
+    @time_it()
     def insert_facility_type_data(self, data: pandas.DataFrame):
         """Populate `facility_types` table."""
         facility_types = (
@@ -606,6 +611,7 @@ class FoodInspections(BusinessLicenses):
         data = self.normalize_strings(data)
         data = self.fix_cities(data)
         data = self.remove_non_chicago_entries(data)
+        data = self.remove_schools(data)
         data = self.convert_dates(data)
         data = self.fill_missing(data)
         return data
