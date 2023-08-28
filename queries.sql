@@ -54,10 +54,10 @@ GROUP BY
 ORDER BY
     passed_inspections_to_business_ratio DESC;
 
--- Frequency of violation types
+-- Violation type occurrences
 SELECT
     violation_types.id,
-    violation_types.name,
+    violation_types.name as violation,
     COUNT(*) as occurrences
 FROM
     violations
@@ -67,10 +67,10 @@ GROUP BY
 ORDER BY
     occurrences DESC;
 
--- Frequency of violation types by ward
+-- Violation type occurrences by ward
 SELECT
     COUNT(violations.violation_type_id) as violation_count,
-    violation_types.name,
+    violation_types.name as violation,
     business_addresses.ward
 FROM
     violations
@@ -79,8 +79,6 @@ FROM
     INNER JOIN licenses ON inspections.license_number = licenses.license_number
     INNER JOIN businesses ON licenses.account_number = businesses.account_number
     INNER JOIN business_addresses ON businesses.address_id = business_addresses.id
-WHERE
-    violations.violation_type_id <> 55
 GROUP BY
     business_addresses.ward,
     violations.violation_type_id
@@ -94,8 +92,8 @@ SELECT
 FROM
     (
         SELECT
-            COUNT(violations.violation_type_id) as violation_count,
-            violation_types.name,
+            COUNT(violations.violation_type_id) as occurences,
+            violation_types.name as violation,
             business_addresses.ward
         FROM
             violations
