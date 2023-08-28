@@ -493,6 +493,7 @@ class FoodInspections(BusinessLicenses):
         data = (
             data[["license_number", "dba", "aka"]]
             .drop_duplicates("license_number")
+            .dropna(subset=["license_number"])
             .sort_values("license_number")
         )
         with ChiBased() as db:
