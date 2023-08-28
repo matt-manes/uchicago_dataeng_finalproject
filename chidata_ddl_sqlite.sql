@@ -63,7 +63,8 @@ CREATE TABLE
         expiration_date DATE,
         issue_date DATE,
         status_id INTEGER,
-        status_change_date DATE
+        status_change_date DATE,
+        license_code INTEGER
     );
 
 ------------------------------------------------|

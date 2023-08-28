@@ -327,6 +327,7 @@ class BusinessLicenses:
                 "issue_date",
                 "license_status",
                 "license_status_change_date",
+                "license_code",
             ]
         ]
         data = data.sort_values("license_term_start_date", ascending=False)
@@ -351,6 +352,7 @@ class BusinessLicenses:
                     "issue_date",
                     "status_id",
                     "status_change_date",
+                    "license_code",
                 ],
                 licenses.values.tolist(),
             )

@@ -112,9 +112,11 @@ CREATE TABLE IF NOT EXISTS `chidata`.`licenses` (
   `issue_date` DATE NULL,
   `status_id` INT NULL,
   `status_change_date` DATE NULL,
+  `license_code` INT NULL,
   PRIMARY KEY (`license_number`),
   INDEX `account_number_idx` (`account_number` ASC) VISIBLE,
   INDEX `id_idx` (`status_id` ASC) VISIBLE,
+  INDEX `licenses_license_code_idx` (`license_code` ASC) VISIBLE,
   CONSTRAINT `licenses_account_number`
     FOREIGN KEY (`account_number`)
     REFERENCES `chidata`.`businesses` (`account_number`)
@@ -123,6 +125,11 @@ CREATE TABLE IF NOT EXISTS `chidata`.`licenses` (
   CONSTRAINT `licenses_status_id`
     FOREIGN KEY (`status_id`)
     REFERENCES `chidata`.`license_statuses` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `licenses_license_code`
+    FOREIGN KEY (`license_code`)
+    REFERENCES `chidata`.`license_codes` (`code`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
