@@ -2,6 +2,7 @@ from databased import DataBased, _connect
 from pathier import Pathier
 from typing import Any
 import sqlite3
+from noiftimer import time_it
 
 root = Pathier(__file__).parent
 
@@ -45,3 +46,28 @@ class ChiBased(DataBased):
             self.cursor.execute(
                 f"INSERT INTO {table} {columns} VALUES {placeholder};", flattened_values
             )
+
+    @time_it()
+    def generate_mysql_dump(self):
+        """Generate a file called `chidata_dml_mysql.sql` that contains insert statements for all of the data."""
+        output = "USE chidata;\n"
+        output += "SET foreign_key_checks = 0;\n"
+        indent = "    "
+        for table in self.get_table_names():
+            output += f"TRUNCATE TABLE {table};\n"
+            columns = ", ".join(self.get_column_names(table))
+            output += "INSERT INTO\n"
+            output += f"{indent}{table} ({columns})\n"
+            output += "VALUES\n"
+            rows = self.get_rows(table, values_only=True)
+            rows = [tuple([value or "NULL" for value in row]) for row in rows]
+            output += ",\n".join(f"{indent}{row}" for row in rows)
+            output += ";\n"
+        output += "SET foreign_key_checks = 1;"
+        output = output.replace("'NULL'", "NULL")
+        (root / "chidata_dml_mysql.sql").write_text(output, encoding="utf-8")
+
+
+if __name__ == "__main__":
+    with ChiBased() as db:
+        db.generate_mysql_dump()
