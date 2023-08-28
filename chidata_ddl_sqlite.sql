@@ -31,12 +31,6 @@ CREATE TABLE
     license_codes (code INTEGER PRIMARY KEY, description TEXT);
 
 ------------------------------------------------|
-DROP TABLE IF EXISTS business_activities;
-
-CREATE TABLE
-    business_activities (id INTEGER PRIMARY KEY, description TEXT);
-
-------------------------------------------------|
 DROP TABLE IF EXISTS application_types;
 
 CREATE TABLE
@@ -81,7 +75,6 @@ CREATE TABLE
         license_number INTEGER,
         license_code INTEGER,
         account_number INTEGER,
-        activity_id INTEGER,
         application_type_id INTEGER,
         payment_id INTEGER,
         created_date DATE,

@@ -63,18 +63,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `chidata`.`business_activities`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `chidata`.`business_activities` ;
-
-CREATE TABLE IF NOT EXISTS `chidata`.`business_activities` (
-  `id` INT NOT NULL,
-  `description` VARCHAR(200) NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `chidata`.`application_types`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `chidata`.`application_types` ;
@@ -150,7 +138,6 @@ CREATE TABLE IF NOT EXISTS `chidata`.`license_applications` (
   `license_number` INT NULL,
   `license_code` INT NULL,
   `account_number` INT NULL,
-  `activity_id` INT NULL,
   `application_type_id` INT NULL,
   `payment_id` INT NULL,
   `created_date` DATE NULL,
@@ -161,7 +148,6 @@ CREATE TABLE IF NOT EXISTS `chidata`.`license_applications` (
   PRIMARY KEY (`id`),
   INDEX `license_number_idx` (`license_number` ASC) VISIBLE,
   INDEX `license_code_idx` (`license_code` ASC) VISIBLE,
-  INDEX `activity_id_idx` (`activity_id` ASC) VISIBLE,
   INDEX `application_type_id_idx` (`application_type_id` ASC) VISIBLE,
   INDEX `payment_id_idx` (`payment_id` ASC) VISIBLE,
   INDEX `account_number_idx` (`account_number` ASC) VISIBLE,
@@ -178,11 +164,6 @@ CREATE TABLE IF NOT EXISTS `chidata`.`license_applications` (
   CONSTRAINT `license_applications_account_number`
     FOREIGN KEY (`account_number`)
     REFERENCES `chidata`.`businesses` (`account_number`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `license_applications_activity_id`
-    FOREIGN KEY (`activity_id`)
-    REFERENCES `chidata`.`business_activities` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `license_applications_application_type_id`

@@ -103,7 +103,7 @@ class BusinessLicenses:
                 "LICENSE TERM START DATE": "license_term_start_date",
                 "LICENSE TERM EXPIRATION DATE": "license_term_expiration_date",
                 "LICENSE APPROVED FOR ISSUANCE": "license_approved_for_issuance_date",
-                "DATE ISSUED": "date_issued",
+                "DATE ISSUED": "issue_date",
                 "LICENSE STATUS": "license_status",
                 "LICENSE STATUS CHANGE DATE": "license_status_change_date",
                 "SSA": "ssa",
@@ -122,6 +122,7 @@ class BusinessLicenses:
     def remove_non_chicago_entries(self, data: pandas.DataFrame) -> pandas.DataFrame:
         """Remove rows without a ward number."""
         data = data.dropna(subset=["ward"])
+        data = data[data["state"] == "IL"]
         # Schiller Park is a suburb and not in ward 3,
         # but a couple entries list it as such
         return data[data["city"] != "SCHILLER PARK"]
@@ -226,37 +227,6 @@ class BusinessLicenses:
             )
 
     @time_it()
-    def insert_business_activity_data(self, data: pandas.DataFrame):
-        """Populate `business_activities` table."""
-        # Data is unnormalized with multiple entries per row
-        # Both `business_activity_id` and `business_activity` are delimited with ` | `
-        # Parse them into unique idividual entries
-        unique_activities = {}
-        data = (
-            data[["business_activity_id", "business_activity"]]
-            .dropna(subset=["business_activity_id"])
-            .values.tolist()
-        )
-        for datum in data:
-            ids = datum[0].split(" | ")
-            descriptions = datum[1].split(" | ")
-            for id_, description in zip(ids, descriptions):
-                id_ = int(id_)
-                if id_ not in unique_activities:
-                    unique_activities[id_] = description
-        # Sort and convert to list of tuples
-        activities = [
-            (id_, unique_activities[id_])
-            for id_ in sorted(list(unique_activities.keys()))
-        ]
-        with ChiBased() as db:
-            db.insert_many(
-                "business_activities",
-                ["id", "description"],
-                activities,
-            )
-
-    @time_it()
     def insert_application_type_data(self, data: pandas.DataFrame):
         """Populate `application_types` table."""
         # Get unique values
@@ -275,7 +245,6 @@ class BusinessLicenses:
                 "license_number",
                 "license_code",
                 "account_number",
-                "business_activity_id",
                 "application_type",  # Get type_id from `application_types` table
                 "payment_date",  # Concurrently populate `application_payments` table so generated `payment_id` stays consistent
                 "application_created_date",
@@ -315,7 +284,6 @@ class BusinessLicenses:
                     "license_number",
                     "license_code",
                     "account_number",
-                    "activity_id",
                     "application_type_id",
                     "created_date",
                     "completed_date",
@@ -356,7 +324,7 @@ class BusinessLicenses:
                 "account_number",
                 "license_term_start_date",
                 "license_term_expiration_date",
-                "date_issued",
+                "issue_date",
                 "license_status",
                 "license_status_change_date",
             ]
