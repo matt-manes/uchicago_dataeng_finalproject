@@ -26,7 +26,11 @@ def execute_mysql_script(sql_file: str):
     >>> pass = "password"
 
     #### NOTE: This assumes an unimportant local mysql instance and the user accepts any security tradeoff for the convenience."""
-    creds: dict = (root / "creds.toml").loads()
+    if not (root / "creds.toml").exists():
+        creds = {}
+        creds["user"] = input("Enter your mysql instance username: ")
+    else:
+        creds: dict = (root / "creds.toml").loads()
     if creds.get("pass"):
         os.system(f"mysql -u{creds['user']} -p{creds['pass']} < {sql_file}")
     else:
