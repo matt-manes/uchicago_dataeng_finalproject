@@ -138,6 +138,12 @@ class BusinessLicenses:
                 "ward_precinct",
                 "precinct",
                 "police_district",
+                "business_activity_id",
+                "business_activity",
+                "application_type",
+                "application_created_date",
+                "application_requirements_complete_date",
+                "payment_date",
             ]
         )
 
