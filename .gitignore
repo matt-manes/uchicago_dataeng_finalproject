@@ -2,6 +2,7 @@
 *.pdf
 *scratch*
 *.txt
+!requirements.txt
 *.csv
 *.db
 *.log
