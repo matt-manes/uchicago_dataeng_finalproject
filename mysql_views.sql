@@ -200,3 +200,15 @@ GROUP BY
     ward
 ORDER BY
     inspection_type_to_business_ratio DESC;
+
+-- Ratio of Passed to Failed Inspections By Ward ----------------------------------------------------
+CREATE OR REPLACE VIEW
+    pass_fail_ratio_by_ward AS
+SELECT
+    passed_inspections_by_ward.total_results / failed_inspections_by_ward.num_results AS pass_fail_ratio,
+    passed_inspections_by_ward.ward
+FROM
+    passed_inspections_by_ward
+    INNER JOIN failed_inspections_by_ward ON passed_inspections_by_ward.ward = failed_inspections_by_ward.ward
+ORDER BY
+    pass_fail_ratio DESC;
