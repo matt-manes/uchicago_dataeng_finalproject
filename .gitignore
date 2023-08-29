@@ -10,3 +10,4 @@ __pycache__/*
 *.bak
 *dml*.sql
 creds.toml
+*.docx
