@@ -227,7 +227,7 @@ class BusinessLicenses:
             )
 
     @time_it()
-    def insert_application_type_data(self, data: pandas.DataFrame):
+    def _insert_application_type_data(self, data: pandas.DataFrame):
         """Populate `application_types` table."""
         # Get unique values
         application_types = data.drop_duplicates(subset=["application_type"])[
@@ -237,7 +237,7 @@ class BusinessLicenses:
             db.insert_many("application_types", ["type"], application_types)
 
     @time_it()
-    def insert_application_data(self, data: pandas.DataFrame):
+    def _insert_application_data(self, data: pandas.DataFrame):
         """Populate `license_applications` and `application_payments` tables."""
         data = data[
             [
@@ -620,6 +620,7 @@ class FoodInspections(BusinessLicenses):
 
 @time_it()
 def load_to_sqlite():
+    (root / "chi.db").delete()
     with ChiBased() as db:
         db.create_tables_script()
     loader = BusinessLicenses()

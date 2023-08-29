@@ -63,30 +63,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `chidata`.`application_types`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `chidata`.`application_types` ;
-
-CREATE TABLE IF NOT EXISTS `chidata`.`application_types` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `type` VARCHAR(6) NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `chidata`.`application_payments`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `chidata`.`application_payments` ;
-
-CREATE TABLE IF NOT EXISTS `chidata`.`application_payments` (
-  `id` INT NOT NULL,
-  `date` DATE NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `chidata`.`license_statuses`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `chidata`.`license_statuses` ;
@@ -130,57 +106,6 @@ CREATE TABLE IF NOT EXISTS `chidata`.`licenses` (
   CONSTRAINT `licenses_license_code`
     FOREIGN KEY (`license_code`)
     REFERENCES `chidata`.`license_codes` (`code`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `chidata`.`license_applications`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `chidata`.`license_applications` ;
-
-CREATE TABLE IF NOT EXISTS `chidata`.`license_applications` (
-  `id` INT NOT NULL,
-  `license_number` INT NULL,
-  `license_code` INT NULL,
-  `account_number` INT NULL,
-  `application_type_id` INT NULL,
-  `payment_id` INT NULL,
-  `created_date` DATE NULL,
-  `completed_date` DATE NULL,
-  `approval_date` DATE NULL,
-  `conditional_approval` CHAR(1) NULL,
-  `site_number` INT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `license_number_idx` (`license_number` ASC) VISIBLE,
-  INDEX `license_code_idx` (`license_code` ASC) VISIBLE,
-  INDEX `application_type_id_idx` (`application_type_id` ASC) VISIBLE,
-  INDEX `payment_id_idx` (`payment_id` ASC) VISIBLE,
-  INDEX `account_number_idx` (`account_number` ASC) VISIBLE,
-  CONSTRAINT `license_applications_license_number`
-    FOREIGN KEY (`license_number`)
-    REFERENCES `chidata`.`licenses` (`license_number`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `license_applications_license_code`
-    FOREIGN KEY (`license_code`)
-    REFERENCES `chidata`.`license_codes` (`code`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `license_applications_account_number`
-    FOREIGN KEY (`account_number`)
-    REFERENCES `chidata`.`businesses` (`account_number`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `license_applications_application_type_id`
-    FOREIGN KEY (`application_type_id`)
-    REFERENCES `chidata`.`application_types` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `license_applications_payment_id`
-    FOREIGN KEY (`payment_id`)
-    REFERENCES `chidata`.`application_payments` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

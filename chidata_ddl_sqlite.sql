@@ -31,17 +31,15 @@ CREATE TABLE
     license_codes (code INTEGER PRIMARY KEY, description TEXT);
 
 ------------------------------------------------|
-DROP TABLE IF EXISTS application_types;
+/* DROP TABLE IF EXISTS application_types;
 
 CREATE TABLE
-    application_types (id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT);
-
+application_types (id INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT); */
 ------------------------------------------------|
-DROP TABLE IF EXISTS application_payments;
+/* DROP TABLE IF EXISTS application_payments;
 
 CREATE TABLE
-    application_payments (id INTEGER PRIMARY KEY AUTOINCREMENT, date DATE);
-
+application_payments (id INTEGER PRIMARY KEY AUTOINCREMENT, date DATE); */
 ------------------------------------------------|
 DROP TABLE IF EXISTS license_statuses;
 
@@ -68,23 +66,22 @@ CREATE TABLE
     );
 
 ------------------------------------------------|
-DROP TABLE IF EXISTS license_applications;
+/* DROP TABLE IF EXISTS license_applications;
 
 CREATE TABLE
-    license_applications (
-        id INTEGER PRIMARY KEY,
-        license_number INTEGER,
-        license_code INTEGER,
-        account_number INTEGER,
-        application_type_id INTEGER,
-        payment_id INTEGER,
-        created_date DATE,
-        completed_date DATE,
-        approval_date DATE,
-        conditional_approval TEXT,
-        site_number INTEGER
-    );
-
+license_applications (
+id INTEGER PRIMARY KEY,
+license_number INTEGER,
+license_code INTEGER,
+account_number INTEGER,
+application_type_id INTEGER,
+payment_id INTEGER,
+created_date DATE,
+completed_date DATE,
+approval_date DATE,
+conditional_approval TEXT,
+site_number INTEGER
+); */
 ------------------------------------------------|
 -- food_inspections.csv
 ------------------------------------------------|
