@@ -1,0 +1,10 @@
+argshell
+databased
+griddle
+noiftimer
+numpy
+pandas
+pathier
+pymongo
+requests
+younotyou
