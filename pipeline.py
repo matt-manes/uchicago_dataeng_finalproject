@@ -1,5 +1,3 @@
-import os
-
 from noiftimer import time_it
 from pathier import Pathier
 
