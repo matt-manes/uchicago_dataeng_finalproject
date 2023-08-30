@@ -540,6 +540,10 @@ class FoodInspections(BusinessLicenses):
                 "inspection_date",
             ]
         ].sort_values("inspection_id")
+        data = data.dropna(subset=["license_number"])
+        data = data.drop_duplicates(
+            subset=["license_number", "inspection_type", "results", "inspection_date"]
+        )
         for args in [
             ["street", "facility_address_id", "facility_addresses", "id", "street"],
             ["inspection_type", "inspection_type_id", "inspection_types", "id", "name"],
