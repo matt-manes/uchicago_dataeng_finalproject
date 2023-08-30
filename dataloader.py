@@ -593,6 +593,16 @@ class FoodInspections(BusinessLicenses):
     def insert_violations_data(self, data: pandas.DataFrame):
         """Populate `violations` and `violation_types` tables."""
         data = data[["violations", "inspection_id"]].dropna(subset=["violations"])
+        with ChiBased() as db:
+            data = data[
+                data["inspection_id"]
+                in [
+                    row[0]
+                    for row in db.get_rows(
+                        "inspections", columns_to_return=["id"], values_only=True
+                    )
+                ]
+            ]
         unique_violations = {}
         inspection_violations = []
         for item in data.values.tolist():
