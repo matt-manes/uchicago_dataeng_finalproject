@@ -587,7 +587,7 @@ class FoodInspections(BusinessLicenses):
 
     @time_it()
     def insert_violations_data(self, data: pandas.DataFrame):
-        """ """
+        """Populate `violations` and `violation_types` tables."""
         data = data[["violations", "inspection_id"]].dropna(subset=["violations"])
         unique_violations = {}
         inspection_violations = []
