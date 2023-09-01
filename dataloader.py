@@ -594,15 +594,13 @@ class FoodInspections(BusinessLicenses):
         """Populate `violations` and `violation_types` tables."""
         data = data[["violations", "inspection_id"]].dropna(subset=["violations"])
         with ChiBased() as db:
-            data = data[
-                data["inspection_id"]
-                in [
-                    row[0]
-                    for row in db.get_rows(
-                        "inspections", columns_to_return=["id"], values_only=True
-                    )
-                ]
+            inspection_ids = [
+                row[0]
+                for row in db.get_rows(
+                    "inspections", columns_to_return=["id"], values_only=True
+                )
             ]
+
         unique_violations = {}
         inspection_violations = []
         for item in data.values.tolist():
@@ -611,7 +609,8 @@ class FoodInspections(BusinessLicenses):
                 violation_id, violation, comment = violation
                 if violation_id not in unique_violations:
                     unique_violations[violation_id] = violation
-                inspection_violations.append((inspection_id, violation_id, comment))
+                if inspection_id in inspection_ids:
+                    inspection_violations.append((inspection_id, violation_id, comment))
         unique_violations = [
             (key, unique_violations[key])
             for key in sorted(list(unique_violations.keys()))
@@ -639,6 +638,29 @@ class FoodInspections(BusinessLicenses):
 
 
 @time_it()
+def prune():
+    """Prune unneeded data."""
+    with ChiBased() as db:
+        db.query(
+            """ DELETE FROM licenses WHERE license_number NOT IN (SELECT license_number FROM inspected_businesses);"""
+        )
+        db.query(
+            """ DELETE FROM inspected_businesses WHERE license_number NOT IN (SELECT license_number FROM licenses); """
+        )
+        db.query(
+            """ DELETE FROM businesses WHERE account_number NOT IN (SELECT account_number FROM licenses); """
+        )
+        db.query(
+            """ DELETE FROM business_addresses WHERE id NOT IN (SELECT address_id FROM businesses); """
+        )
+        db.query(
+            """ DELETE FROM violations WHERE inspection_id NOT IN (SELECT id FROM inspections); """
+        )
+        db.close()
+        db.vacuum()
+
+
+@time_it()
 def load_to_sqlite():
     (root / "chi.db").delete()
     with ChiBased() as db:
@@ -647,6 +669,7 @@ def load_to_sqlite():
     loader.load_data_to_db()
     loader = FoodInspections()
     loader.load_data_to_db()
+    prune()
 
 
 if __name__ == "__main__":
