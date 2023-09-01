@@ -8,6 +8,6 @@
 *.log
 __pycache__/*
 *.bak
-*dml*.sql
 creds.toml
 *.docx
+*.twbr
