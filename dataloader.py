@@ -1,11 +1,13 @@
-import pandas
-import numpy
 import re
 from typing import Any
-from pathier import Pathier
-from chibased import ChiBased
+
+import numpy
+import pandas
 from noiftimer import time_it
+from pathier import Pathier
 from younotyou import younotyou
+
+from chibased import ChiBased
 
 root = Pathier(__file__).parent
 licenses_path = root / "business_licenses.csv"

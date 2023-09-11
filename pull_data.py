@@ -1,6 +1,6 @@
 import requests
-from pathier import Pathier
 from noiftimer import time_it
+from pathier import Pathier
 
 root = Pathier(__file__).parent
 

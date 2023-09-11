@@ -1,9 +1,9 @@
 import argshell
+from databased import DataBased, DBShell, dbparsers
+from griddle import griddy
 from pathier import Pathier
 
-from databased import DataBased, DBShell, dbparsers
 from chibased import ChiBased
-from griddle import griddy
 
 root = Pathier(__file__).parent
 

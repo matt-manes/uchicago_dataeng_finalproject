@@ -1,6 +1,6 @@
-from pymongo import MongoClient
 import pandas
 from pathier import Pathier
+from pymongo import MongoClient
 
 root = Pathier(__file__).parent
 
