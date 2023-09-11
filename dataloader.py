@@ -11,9 +11,7 @@ from chibased import ChiBased
 
 root = Pathier(__file__).parent
 licenses_path = root / "business_licenses.csv"
-# licenses_path = root / "bus_lic_sample.csv"
 inspections_path = root / "food_inspections.csv"
-# inspections_path = root / "food_spec_sample.csv"
 pandas.set_option("mode.chained_assignment", None)
 """ Functions for reading, cleaning, and normalizing csv data. """
 
@@ -235,6 +233,7 @@ class BusinessLicenses:
             )
 
     @time_it()
+    # The prefixed `_` is to prevent this from running in `self.load_data_to_db` to reduce db size
     def _insert_application_type_data(self, data: pandas.DataFrame):
         """Populate `application_types` table."""
         # Get unique values
@@ -245,6 +244,7 @@ class BusinessLicenses:
             db.insert_many("application_types", ["type"], application_types)
 
     @time_it()
+    # The prefixed `_` is to prevent this from running in `self.load_data_to_db` to reduce db size
     def _insert_application_data(self, data: pandas.DataFrame):
         """Populate `license_applications` and `application_payments` tables."""
         data = data[
