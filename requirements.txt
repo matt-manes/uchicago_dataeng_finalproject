@@ -1,5 +1,5 @@
 argshell
-databased
+databased==2.5.0
 griddle
 noiftimer
 numpy
