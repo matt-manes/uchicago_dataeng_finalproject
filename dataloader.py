@@ -38,9 +38,7 @@ class BusinessLicenses:
         with ChiBased() as db:
             return {
                 row[match_column]: row[id_column]
-                for row in db.get_rows(
-                    table, columns_to_return=[id_column, match_column]
-                )
+                for row in db.select(table, [id_column, match_column])
             }
 
     def replace_column_with_id(
@@ -63,11 +61,12 @@ class BusinessLicenses:
 
         >>> data = self.replace_column_with_id(data, "street", "address_id", "addresses", "address_id", "street")
 
-        will return a new dataframe where the `street` column has been renamed to `address_id` and the values replaced with id numbers."""
-        lookup_table = self.get_id_lookup_table(
+        will return a new dataframe where the `street` column has been renamed to `address_id` and the values replaced with id numbers.
+        """
+        lookup = self.get_id_lookup_table(
             lookup_table, lookup_id_column, lookup_match_column
         )
-        data[frame_column] = data[frame_column].apply(lambda key: lookup_table[key])
+        data[frame_column] = data[frame_column].apply(lambda key: lookup[key])
         data = data.rename({frame_column: frame_column_new_name})
         return data
 
@@ -165,8 +164,8 @@ class BusinessLicenses:
     @time_it()
     def normalize_strings(self, data: pandas.DataFrame) -> pandas.DataFrame:
         """Convert multi-whitespaces to single whitespaces and convert words to first letter capitals."""
-        normalize = (
-            lambda string_: " ".join(word.capitalize() for word in string_.split())
+        normalize = lambda string_: (
+            " ".join(word.capitalize() for word in string_.split())
             if isinstance(string_, str)
             else string_
         )
@@ -199,7 +198,7 @@ class BusinessLicenses:
             ]
         ]
         with ChiBased() as db:
-            db.insert_many(
+            db.insert(
                 "business_addresses", list(addresses.columns), addresses.values.tolist()
             )
 
@@ -214,7 +213,7 @@ class BusinessLicenses:
             data, "street", "address_id", "business_addresses", "id", "street"
         )
         with ChiBased() as db:
-            db.insert_many(
+            db.insert(
                 "businesses",
                 ["account_number", "legal_name", "dba", "address_id"],
                 businesses.values.tolist(),
@@ -228,9 +227,7 @@ class BusinessLicenses:
         data = data.sort_values(["license_code"])
         data = data[["license_code", "license_description"]]
         with ChiBased() as db:
-            db.insert_many(
-                "license_codes", ["code", "description"], data.values.tolist()
-            )
+            db.insert("license_codes", ["code", "description"], data.values.tolist())
 
     @time_it()
     # The prefixed `_` is to prevent this from running in `self.load_data_to_db` to reduce db size
@@ -241,7 +238,7 @@ class BusinessLicenses:
             ["application_type"]
         ].values.tolist()
         with ChiBased() as db:
-            db.insert_many("application_types", ["type"], application_types)
+            db.insert("application_types", ["type"], application_types)
 
     @time_it()
     # The prefixed `_` is to prevent this from running in `self.load_data_to_db` to reduce db size
@@ -284,8 +281,8 @@ class BusinessLicenses:
                 applications.append(tuple(list(application) + [payment_id]))
                 payment_dates.append(tuple([payment_id, payment]))
                 payment_id += 1
-            db.insert_many("application_payments", ["id", "date"], payment_dates)
-            db.insert_many(
+            db.insert("application_payments", ["id", "date"], payment_dates)
+            db.insert(
                 "license_applications",
                 [
                     "id",
@@ -307,7 +304,7 @@ class BusinessLicenses:
     def insert_license_status_data(self, data: pandas.DataFrame):
         """Populate `license_statuses` table."""
         with ChiBased() as db:
-            db.insert_many(
+            db.insert(
                 "license_statuses",
                 ["id", "status", "description"],
                 [
@@ -350,7 +347,7 @@ class BusinessLicenses:
                 "status",
             )
             licenses = licenses.sort_values("license_number")
-            db.insert_many(
+            db.insert(
                 "licenses",
                 [
                     "license_number",
@@ -387,7 +384,7 @@ class BusinessLicenses:
         # (NOTE: This means the order of the functions in the class matters)
         # `self.__class__.__base__().__dir__()` is so child classes don't call parent class data insertion functions
         for func in younotyou(
-            self.__dir__(), ["insert_*_data"], self.__class__.__base__().__dir__()
+            self.__dir__(), ["insert_*_data"], self.__class__.__base__().__dir__()  # type: ignore
         ):
             getattr(self, func)(data)
 
@@ -453,14 +450,14 @@ class FoodInspections(BusinessLicenses):
             data[["facility_type"]].drop_duplicates().sort_values("facility_type")
         )
         with ChiBased() as db:
-            db.insert_many("facility_types", ["name"], facility_types.values.tolist())
+            db.insert("facility_types", ["name"], facility_types.values.tolist())
 
     @time_it()
     def insert_risk_level_data(self, data: pandas.DataFrame):
         """Populate `risk_levels` table."""
         risk_levels = data[["risk"]].drop_duplicates().sort_values("risk")
         with ChiBased() as db:
-            db.insert_many("risk_levels", ["name"], risk_levels.values.tolist())
+            db.insert("risk_levels", ["name"], risk_levels.values.tolist())
 
     @time_it()
     def insert_facility_address_data(self, data: pandas.DataFrame):
@@ -482,7 +479,7 @@ class FoodInspections(BusinessLicenses):
         ]:
             data = self.replace_column_with_id(data, *args)
         with ChiBased() as db:
-            db.insert_many(
+            db.insert(
                 "facility_addresses",
                 [
                     "street",
@@ -505,7 +502,7 @@ class FoodInspections(BusinessLicenses):
             .sort_values("license_number")
         )
         with ChiBased() as db:
-            db.insert_many(
+            db.insert(
                 "inspected_businesses",
                 ["license_number", "dba", "aka"],
                 data.values.tolist(),
@@ -520,14 +517,14 @@ class FoodInspections(BusinessLicenses):
             .sort_values("inspection_type")
         )
         with ChiBased() as db:
-            db.insert_many("inspection_types", ["name"], data.values.tolist())
+            db.insert("inspection_types", ["name"], data.values.tolist())
 
     @time_it()
     def insert_result_type_data(self, data: pandas.DataFrame):
         """Populate `result_types` table."""
         data = data[["results"]].drop_duplicates("results").sort_values("results")
         with ChiBased() as db:
-            db.insert_many("result_types", ["description"], data.values.tolist())
+            db.insert("result_types", ["description"], data.values.tolist())
 
     @time_it()
     def insert_inspection_data(self, data: pandas.DataFrame):
@@ -553,7 +550,7 @@ class FoodInspections(BusinessLicenses):
         ]:
             data = self.replace_column_with_id(data, *args)
         with ChiBased() as db:
-            db.insert_many(
+            db.insert(
                 "inspections",
                 [
                     "id",
@@ -569,7 +566,8 @@ class FoodInspections(BusinessLicenses):
     def parse_violation(self, violation: str) -> list[tuple[str, str, str]]:
         """Parse a violation entry into a list of violations.
 
-        Each return list element will be the violation number, violation title, and comments."""
+        Each return list element will be the violation number, violation title, and comments.
+        """
         violations = violation.replace("&", "And").split(" | ")
         parsed_violations = []
         for violation in violations:
@@ -597,10 +595,7 @@ class FoodInspections(BusinessLicenses):
         data = data[["violations", "inspection_id"]].dropna(subset=["violations"])
         with ChiBased() as db:
             inspection_ids = [
-                row[0]
-                for row in db.get_rows(
-                    "inspections", columns_to_return=["id"], values_only=True
-                )
+                list(row.values())[0] for row in db.select("inspections", ["id"])
             ]
 
         unique_violations = {}
@@ -618,8 +613,8 @@ class FoodInspections(BusinessLicenses):
             for key in sorted(list(unique_violations.keys()))
         ]
         with ChiBased() as db:
-            db.insert_many("violation_types", ["id", "name"], unique_violations)
-            db.insert_many(
+            db.insert("violation_types", ["id", "name"], unique_violations)
+            db.insert(
                 "violations",
                 ["inspection_id", "violation_type_id", "comment"],
                 inspection_violations,

@@ -18,7 +18,8 @@ def load_creds() -> dict[str, str] | None:
     >>> username = <username>
     >>> password = <password>
 
-    #### NOTE: This assumes an unimportant local mysql instance and the user accepts any security tradeoff for the convenience."""
+    #### NOTE: This assumes an unimportant local mysql instance and the user accepts any security tradeoff for the convenience.
+    """
     file = root / "creds.toml"
     if file.exists():
         return file.loads()
@@ -27,7 +28,7 @@ def load_creds() -> dict[str, str] | None:
 
 def prompt_for_creds() -> dict[str, str]:
     """Prompt the user for their username and password."""
-    creds = {}
+    creds: dict[str, str] = {}
     creds["username"] = input("Enter MySQL username: ")
     creds["password"] = getpass.getpass("Enter MySQL password: ")
     return creds
