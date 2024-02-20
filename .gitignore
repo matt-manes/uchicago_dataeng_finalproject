@@ -12,3 +12,4 @@ creds.toml
 *.docx
 *.twbr
 chidata_dml_mysql.sql
+.vscode
